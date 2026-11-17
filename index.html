@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KASÚMA- Mythical Filipino Horror Game </title>
+    <title>KASÚMA - Mythical Filipino Horror Game</title>
 
     <style>
         * {
@@ -317,25 +317,43 @@
             }
         }
 
-        /* H2 SUBTITLE */
+        /* H2 + P2 AT THE BOTTOM */
 
-        #warningSubtitle {
+        #introCaption {
             position: absolute;
-            bottom: 35px;
             left: 20px;
             right: 20px;
+            bottom: 22px;
             z-index: 6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 7px;
+            text-align: center;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #introCaption.show-caption {
+            animation: subtitleAppear 1.5s ease forwards;
+        }
+
+        #warningSubtitle {
             color: #ccc;
             font-size: 16px;
             font-weight: normal;
             letter-spacing: 3px;
-            text-align: center;
             text-shadow: 0 0 8px red;
-            opacity: 0;
         }
 
-        #warningSubtitle.show-subtitle {
-            animation: subtitleAppear 1.5s ease forwards;
+        #warningParagraph {
+            max-width: 850px;
+            color: #aaa;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.5;
+            letter-spacing: 0.4px;
+            text-shadow: 0 0 5px black;
         }
 
         @keyframes subtitleAppear {
@@ -422,10 +440,21 @@
                 font-size: 35px;
             }
 
+            #introCaption {
+                left: 12px;
+                right: 12px;
+                bottom: 14px;
+                gap: 5px;
+            }
+
             #warningSubtitle {
-                font-size: 13px;
+                font-size: 12px;
                 letter-spacing: 2px;
-                bottom: 25px;
+            }
+
+            #warningParagraph {
+                font-size: 10px;
+                line-height: 1.4;
             }
 
             #mainMenu h1 {
@@ -467,9 +496,7 @@
         <h1 id="warningTitle">WARNING</h1>
 
         <p id="warningText">
-            This game contains fictional horror elements
-            and mature themes that may not be suitable
-            for all players.
+            This game is a fictional horror experience inspired by Filipino folklore, traditional beliefs, supernatural stories, and cultural elements. It is designed to create an atmosphere of mystery, tension, fear, and psychological uneasiness.
         </p>
 
         <button id="continueBtn">CONTINUE</button>
@@ -495,9 +522,19 @@
         <div class="black-flash"></div>
         <div class="glitch-lines"></div>
 
-        <h2 id="warningSubtitle">
-            PLAYER DISCRETION IS ADVISED
-        </h2>
+        <!-- H2 AND P2 -->
+
+        <div id="introCaption">
+
+            <h2 id="warningSubtitle">
+                PLAYER DISCRETION IS ADVISED
+            </h2>
+
+            <p id="warningParagraph">
+                This game contains intense horror elements, jump scares, and disturbing content that may not be suitable for all players. Please be aware of your own comfort level and proceed with caution. We encourage players to consider their personal comfort and sensitivity before starting the game. If any part of the experience becomes overwhelming, players are encouraged to pause, take a break, or discontinue playing.
+            </p>
+
+        </div>
 
     </section>
 
@@ -529,7 +566,7 @@
         const warning = document.getElementById("warning");
         const warningTitle = document.getElementById("warningTitle");
         const warningText = document.getElementById("warningText");
-        const warningSubtitle = document.getElementById("warningSubtitle");
+        const introCaption = document.getElementById("introCaption");
 
         const intro = document.getElementById("intro");
         const video = document.getElementById("gameVideo");
@@ -567,9 +604,7 @@
             // WAIT 5 SECONDS
 
             setTimeout(() => {
-
                 startIntro();
-
             }, 5000);
 
         });
@@ -586,9 +621,9 @@
 
             intro.style.display = "block";
 
-            // SHOW SUBTITLE
+            // SHOW H2 AND P2 TOGETHER
 
-            warningSubtitle.classList.add("show-subtitle");
+            introCaption.classList.add("show-caption");
 
             // RESET VIDEO
 
@@ -603,15 +638,10 @@
             // START VIDEO
 
             try {
-
                 await video.play();
-
             } catch (error) {
-
                 console.log("Video playback error:", error);
-
                 showMainMenu();
-
             }
 
         }
@@ -619,11 +649,8 @@
         // SHOW MAIN MENU AFTER VIDEO
 
         function showMainMenu() {
-
             intro.style.display = "none";
-
             mainMenu.style.display = "flex";
-
         }
 
         // VIDEO ENDED
