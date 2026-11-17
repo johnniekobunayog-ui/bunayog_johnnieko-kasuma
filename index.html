@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KASUMA - Mythical Filipino Horror Game</title>
+    <title>KASUMA - Horror Game</title>
 
     <style>
         * {
@@ -36,9 +36,10 @@
             box-shadow: 0 0 20px red;
         }
 
+        /* WARNING SCREEN */
+
         #warning {
             position: relative;
-            isolation: isolate;
             height: 100vh;
             display: flex;
             flex-direction: column;
@@ -48,6 +49,7 @@
             padding: 30px;
             background: black;
             overflow: hidden;
+            isolation: isolate;
         }
 
         #warning h1 {
@@ -73,6 +75,8 @@
             z-index: 6;
         }
 
+        /* WARNING BLACK FLICKER */
+
         #warning::before {
             content: "";
             position: absolute;
@@ -89,18 +93,16 @@
                 opacity: 0;
             }
 
-            15.5% {
+            15.5%, 80.5% {
                 opacity: 0.95;
             }
 
             45.5% {
                 opacity: 1;
             }
-
-            80.5% {
-                opacity: 0.85;
-            }
         }
+
+        /* WARNING RED FLASH */
 
         #warning::after {
             content: "";
@@ -128,6 +130,8 @@
             }
         }
 
+        /* WARNING TITLE GLITCH */
+
         @keyframes warningGlitch {
             0%, 85%, 100% {
                 transform: translateX(0);
@@ -150,6 +154,8 @@
             }
         }
 
+        /* RATING BADGE */
+
         #ratingBadge {
             display: none;
             position: fixed;
@@ -165,7 +171,8 @@
             font-weight: bold;
             letter-spacing: 2px;
             box-shadow: 0 0 15px red;
-            animation: ratingAppear 1s ease, ratingGlow 2s infinite;
+            animation: ratingAppear 1s ease,
+                       ratingGlow 2s infinite;
         }
 
         @keyframes ratingAppear {
@@ -190,6 +197,8 @@
             }
         }
 
+        /* INTRO VIDEO */
+
         #intro {
             display: none;
             position: relative;
@@ -206,6 +215,35 @@
             object-fit: contain;
             z-index: 1;
         }
+
+        /* INTRO RED FLASH */
+
+        .red-flash {
+            position: absolute;
+            inset: 0;
+            background: red;
+            z-index: 2;
+            pointer-events: none;
+            opacity: 0;
+            mix-blend-mode: screen;
+            animation: introRed 5s infinite;
+        }
+
+        @keyframes introRed {
+            0%, 20%, 22%, 55%, 57%, 100% {
+                opacity: 0;
+            }
+
+            21% {
+                opacity: 0.35;
+            }
+
+            56% {
+                opacity: 0.5;
+            }
+        }
+
+        /* INTRO BLACK FLICKER */
 
         .black-flash {
             position: absolute;
@@ -235,30 +273,7 @@
             }
         }
 
-        .red-flash {
-            position: absolute;
-            inset: 0;
-            background: red;
-            z-index: 2;
-            pointer-events: none;
-            opacity: 0;
-            mix-blend-mode: screen;
-            animation: introRed 5s infinite;
-        }
-
-        @keyframes introRed {
-            0%, 20%, 22%, 55%, 57%, 100% {
-                opacity: 0;
-            }
-
-            21% {
-                opacity: 0.35;
-            }
-
-            56% {
-                opacity: 0.5;
-            }
-        }
+        /* INTRO GLITCH LINES */
 
         .glitch-lines {
             position: absolute;
@@ -301,6 +316,41 @@
                 transform: translateX(0);
             }
         }
+
+        /* H2 SUBTITLE */
+
+        #warningSubtitle {
+            position: absolute;
+            bottom: 35px;
+            left: 20px;
+            right: 20px;
+            z-index: 6;
+            color: #ccc;
+            font-size: 16px;
+            font-weight: normal;
+            letter-spacing: 3px;
+            text-align: center;
+            text-shadow: 0 0 8px red;
+            opacity: 0;
+        }
+
+        #warningSubtitle.show-subtitle {
+            animation: subtitleAppear 1.5s ease forwards;
+        }
+
+        @keyframes subtitleAppear {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* MAIN MENU */
 
         #mainMenu {
             display: none;
@@ -365,9 +415,17 @@
             width: 220px;
         }
 
+        /* RESPONSIVE */
+
         @media (max-width: 600px) {
             #warning h1 {
                 font-size: 35px;
+            }
+
+            #warningSubtitle {
+                font-size: 13px;
+                letter-spacing: 2px;
+                bottom: 25px;
             }
 
             #mainMenu h1 {
@@ -382,6 +440,8 @@
             }
         }
 
+        /* REDUCED MOTION */
+
         @media (prefers-reduced-motion: reduce) {
             #warning::before,
             #warning::after,
@@ -394,28 +454,38 @@
                 animation: none;
             }
         }
+
     </style>
 </head>
 
 <body>
 
-    <section id="warning">
-        <h1>WARNING</h1>
+    <!-- WARNING SCREEN -->
 
-        <p>
+    <section id="warning">
+
+        <h1 id="warningTitle">WARNING</h1>
+
+        <p id="warningText">
             This game contains fictional horror elements
             and mature themes that may not be suitable
             for all players.
         </p>
 
         <button id="continueBtn">CONTINUE</button>
+
     </section>
+
+    <!-- RATING BADGE -->
 
     <div id="ratingBadge">
         18+ RATED
     </div>
 
+    <!-- INTRO VIDEO -->
+
     <section id="intro">
+
         <video id="gameVideo" playsinline preload="auto">
             <source src="assets/intro.mp4" type="video/mp4">
             Your browser does not support HTML video.
@@ -424,9 +494,17 @@
         <div class="red-flash"></div>
         <div class="black-flash"></div>
         <div class="glitch-lines"></div>
+
+        <h2 id="warningSubtitle">
+            PLAYER DISCRETION IS ADVISED
+        </h2>
+
     </section>
 
+    <!-- MAIN MENU -->
+
     <section id="mainMenu">
+
         <h1>KASUMA</h1>
 
         <p>Something is following you...</p>
@@ -435,52 +513,123 @@
         <button>LOAD GAME</button>
         <button>SETTINGS</button>
         <button>EXIT</button>
+
     </section>
+
+    <!-- BACKGROUND MUSIC -->
 
     <audio id="backgroundMusic" loop preload="auto">
         <source src="assets/background.mp3" type="audio/mpeg">
     </audio>
 
     <script>
+
+        // ELEMENTS
+
         const warning = document.getElementById("warning");
+        const warningTitle = document.getElementById("warningTitle");
+        const warningText = document.getElementById("warningText");
+        const warningSubtitle = document.getElementById("warningSubtitle");
+
         const intro = document.getElementById("intro");
         const video = document.getElementById("gameVideo");
+
         const mainMenu = document.getElementById("mainMenu");
         const continueBtn = document.getElementById("continueBtn");
+
         const backgroundMusic = document.getElementById("backgroundMusic");
         const ratingBadge = document.getElementById("ratingBadge");
 
+        // SETTINGS
+
         backgroundMusic.volume = 0.35;
 
-        continueBtn.addEventListener("click", startIntro);
+        let introStarted = false;
+
+        // CONTINUE BUTTON
+
+        continueBtn.addEventListener("click", () => {
+
+            if (introStarted) return;
+
+            introStarted = true;
+
+            // REMOVE WARNING CONTENT IMMEDIATELY
+
+            warningTitle.style.display = "none";
+            warningText.style.display = "none";
+            continueBtn.style.display = "none";
+
+            // SHOW RATING
+
+            ratingBadge.style.display = "block";
+
+            // WAIT 5 SECONDS
+
+            setTimeout(() => {
+
+                startIntro();
+
+            }, 5000);
+
+        });
+
+        // START INTRO
 
         async function startIntro() {
+
+            // HIDE WARNING SCREEN COMPLETELY
+
             warning.style.display = "none";
-            ratingBadge.style.display = "block";
+
+            // SHOW INTRO SCREEN
+
             intro.style.display = "block";
+
+            // SHOW SUBTITLE
+
+            warningSubtitle.classList.add("show-subtitle");
+
+            // RESET VIDEO
 
             video.currentTime = 0;
 
-            try {
-                await backgroundMusic.play();
-            } catch (error) {
+            // START MUSIC
+
+            backgroundMusic.play().catch(error => {
                 console.log("Music playback error:", error);
-            }
+            });
+
+            // START VIDEO
 
             try {
+
                 await video.play();
+
             } catch (error) {
+
                 console.log("Video playback error:", error);
+
                 showMainMenu();
+
             }
+
         }
+
+        // SHOW MAIN MENU AFTER VIDEO
 
         function showMainMenu() {
+
             intro.style.display = "none";
+
             mainMenu.style.display = "flex";
+
         }
 
+        // VIDEO ENDED
+
         video.addEventListener("ended", showMainMenu);
+
     </script>
 
 </body>
