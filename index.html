@@ -171,12 +171,9 @@
             font-weight: bold;
             letter-spacing: 2px;
             box-shadow: 0 0 15px red;
-
             opacity: 0;
             transform: translateY(0);
-            transition:
-                opacity 1.5s ease,
-                transform 1.5s ease;
+            transition: opacity 1.5s ease, transform 1.5s ease;
         }
 
         #ratingBadge.show-rating {
@@ -186,10 +183,10 @@
         }
 
         #ratingBadge.hide-rating {
-            display: block;
             opacity: 0;
             transform: translateY(-12px);
             pointer-events: none;
+            animation: none;
         }
 
         @keyframes ratingGlow {
@@ -365,7 +362,7 @@
             }
         }
 
-        /* H2 + P2 AT THE BOTTOM */
+        /* INTRO CAPTION */
 
         #introCaption {
             position: absolute;
@@ -427,6 +424,7 @@
             background: #080808;
             text-align: center;
             animation: menuAppear 2s ease;
+            overflow: hidden;
         }
 
         @keyframes menuAppear {
@@ -439,35 +437,110 @@
             }
         }
 
-        #mainMenu h1 {
-            font-size: 65px;
-            color: darkred;
-            letter-spacing: 12px;
+        /* KASUMA LOGO CONTAINER */
+
+        .logo-wrap {
+            position: relative;
+            width: 90%;
+            max-width: 450px;
             margin-bottom: 15px;
-            text-shadow: 0 0 15px red;
-            animation: titleGlitch 3s infinite;
+            overflow: hidden;
+            animation: logoFloat 5s ease-in-out infinite;
         }
 
-        @keyframes titleGlitch {
-            0%, 90%, 100% {
-                transform: translateX(0);
+        /* LOGO IMAGE */
+
+        .game-logo {
+            display: block;
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+
+            filter:
+                drop-shadow(0 0 5px rgba(180, 0, 0, 0.8))
+                drop-shadow(0 0 15px rgba(150, 0, 0, 0.5));
+
+            animation: logoGlow 3s ease-in-out infinite;
+        }
+
+        /* LOGO FLOATING EFFECT */
+
+        @keyframes logoFloat {
+            0%, 100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        /* LOGO RED GLOW */
+
+        @keyframes logoGlow {
+            0%, 100% {
+                filter:
+                    drop-shadow(0 0 5px rgba(180, 0, 0, 0.7))
+                    drop-shadow(0 0 12px rgba(120, 0, 0, 0.4));
+            }
+
+            50% {
+                filter:
+                    drop-shadow(0 0 10px red)
+                    drop-shadow(0 0 25px rgba(180, 0, 0, 0.8));
+            }
+        }
+
+        /* LOGO LIGHT REFLECTION */
+
+        .logo-wrap::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -120%;
+            width: 60%;
+            height: 100%;
+
+            background: linear-gradient(
+                110deg,
+                transparent,
+                rgba(255,255,255,0.18),
+                transparent
+            );
+
+            transform: skewX(-25deg);
+            animation: logoShine 7s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes logoShine {
+            0%, 65% {
+                left: -120%;
+            }
+
+            85%, 100% {
+                left: 150%;
+            }
+        }
+
+        /* LOGO APPEAR EFFECT */
+
+        .logo-wrap {
+            opacity: 0;
+            animation:
+                logoFloat 5s ease-in-out infinite,
+                logoAppear 2s ease forwards;
+        }
+
+        @keyframes logoAppear {
+            from {
+                opacity: 0;
+                transform: translateY(25px) scale(0.92);
+            }
+
+            to {
                 opacity: 1;
-                text-shadow: 0 0 15px red;
-            }
-
-            91% {
-                transform: translateX(-5px);
-                opacity: 0.5;
-            }
-
-            92% {
-                transform: translateX(5px);
-                text-shadow: 4px 0 red, -4px 0 white;
-            }
-
-            93% {
-                transform: translateX(0);
-                opacity: 1;
+                transform: translateY(0) scale(1);
             }
         }
 
@@ -475,6 +548,7 @@
             color: #aaa;
             letter-spacing: 3px;
             margin-bottom: 30px;
+            text-shadow: 0 0 8px rgba(150, 0, 0, 0.5);
         }
 
         #mainMenu button {
@@ -505,9 +579,21 @@
                 line-height: 1.4;
             }
 
-            #mainMenu h1 {
-                font-size: 45px;
-                letter-spacing: 8px;
+            .logo-wrap {
+                width: 95%;
+                max-width: 450px;
+                margin-bottom: 12px;
+            }
+
+            #mainMenu p {
+                font-size: 11px;
+                letter-spacing: 2px;
+                margin-bottom: 20px;
+            }
+
+            #mainMenu button {
+                width: 210px;
+                padding: 12px 20px;
             }
 
             #ratingBadge {
@@ -524,8 +610,6 @@
             }
         }
 
-        /* REDUCED MOTION */
-
         @media (prefers-reduced-motion: reduce) {
             #warning::before,
             #warning::after,
@@ -533,12 +617,13 @@
             .black-flash,
             .red-flash,
             .glitch-lines,
-            #mainMenu h1,
-            #ratingBadge {
+            #ratingBadge,
+            .logo-wrap,
+            .game-logo,
+            .logo-wrap::after {
                 animation: none;
             }
         }
-
     </style>
 </head>
 
@@ -569,11 +654,9 @@
     <section id="intro">
 
         <video id="gameVideo" playsinline preload="auto">
-            <source src="./intro1.mp4" type="video/mp4">
+            <source src="intro1.mp4">
             Your browser does not support HTML video.
         </video>
-
-        <!-- SKIP VIDEO -->
 
         <button id="skipVideo">SKIP INTRO »</button>
 
@@ -581,7 +664,7 @@
         <div class="black-flash"></div>
         <div class="glitch-lines"></div>
 
-        <!-- H2 AND P2 -->
+        <!-- INTRO CAPTION -->
 
         <div id="introCaption">
 
@@ -601,14 +684,22 @@
 
     <section id="mainMenu">
 
-        <h1>KASUMA</h1>
+        <!-- KASUMA IMAGE LOGO -->
+
+        <div class="logo-wrap">
+            <img
+                src="logokasuma.png"
+                alt="KASÚMA"
+                class="game-logo"
+            >
+        </div>
 
         <p>Something is following you...</p>
 
-        <button>NEW GAME</button>
-        <button>LOAD GAME</button>
-        <button>SETTINGS</button>
-        <button>EXIT</button>
+        <button id="newGameBtn" type="button">NEW GAME</button>
+        <button type="button">LOAD GAME</button>
+        <button type="button">SETTINGS</button>
+        <button type="button">EXIT</button>
 
     </section>
 
@@ -632,6 +723,7 @@
 
         const mainMenu = document.getElementById("mainMenu");
         const continueBtn = document.getElementById("continueBtn");
+        const newGameBtn = document.getElementById("newGameBtn");
 
         const backgroundMusic = document.getElementById("backgroundMusic");
         const ratingBadge = document.getElementById("ratingBadge");
@@ -660,18 +752,15 @@
 
             introStarted = true;
 
-            // REMOVE WARNING CONTENT IMMEDIATELY
-
             warningTitle.style.display = "none";
             warningText.style.display = "none";
             continueBtn.style.display = "none";
 
-            // SHOW RATING BADGE
-
             ratingBadge.style.display = "block";
-            ratingBadge.classList.add("show-rating");
 
-            // WAIT BEFORE INTRO
+            requestAnimationFrame(() => {
+                ratingBadge.classList.add("show-rating");
+            });
 
             setTimeout(() => {
                 startIntro();
@@ -686,20 +775,14 @@
             warning.style.display = "none";
             intro.style.display = "block";
 
-            // RESET INTRO ELEMENTS
-
             introCaption.classList.remove("show-caption");
             skipVideo.classList.remove("show-skip");
 
             video.currentTime = 0;
 
-            // START BACKGROUND MUSIC
-
             backgroundMusic.play().catch(error => {
                 console.log("Music playback error:", error);
             });
-
-            // PLAY VIDEO
 
             try {
 
@@ -712,15 +795,13 @@
                     ratingBadge.classList.remove("show-rating");
                     ratingBadge.classList.add("hide-rating");
 
-                    // REMOVE BADGE AFTER FADE FINISHES
-
                     setTimeout(() => {
                         ratingBadge.style.display = "none";
                     }, RATING_FADE_DURATION);
 
                 }, RATING_HIDE_DELAY);
 
-                // SHOW H2 AND PARAGRAPH
+                // SHOW CAPTION
 
                 setTimeout(() => {
 
@@ -730,7 +811,7 @@
 
                 }, CAPTION_DELAY);
 
-                // SHOW SKIP BUTTON AFTER 2 SECONDS
+                // SHOW SKIP BUTTON
 
                 setTimeout(() => {
 
@@ -757,11 +838,7 @@
 
             menuShown = true;
 
-            // STOP VIDEO
-
             video.pause();
-
-            // HIDE INTRO ELEMENTS
 
             introCaption.classList.remove("show-caption");
             skipVideo.classList.remove("show-skip");
@@ -774,26 +851,23 @@
             }, RATING_FADE_DURATION);
 
             intro.style.display = "none";
-
-            // SHOW MAIN MENU
-
             mainMenu.style.display = "flex";
 
         }
 
-        // SKIP VIDEO BUTTON
+        // SKIP INTRO
 
         skipVideo.addEventListener("click", () => {
             showMainMenu();
         });
 
-        // WHEN VIDEO ENDS
+        // VIDEO ENDED
 
         video.addEventListener("ended", () => {
             showMainMenu();
         });
 
-        // VIDEO ERROR HANDLER
+        // VIDEO ERROR
 
         video.addEventListener("error", () => {
 
@@ -803,6 +877,12 @@
                 showMainMenu();
             }
 
+        });
+
+        // NEW GAME NAVIGATION
+
+        newGameBtn.addEventListener("click", () => {
+            window.location.href = "startingKasuma.html";
         });
 
     </script>
