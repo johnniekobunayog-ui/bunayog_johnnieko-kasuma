@@ -171,20 +171,25 @@
             font-weight: bold;
             letter-spacing: 2px;
             box-shadow: 0 0 15px red;
-            animation: ratingAppear 1s ease,
-                       ratingGlow 2s infinite;
+
+            opacity: 0;
+            transform: translateY(0);
+            transition:
+                opacity 1.5s ease,
+                transform 1.5s ease;
         }
 
-        @keyframes ratingAppear {
-            from {
-                opacity: 0;
-                transform: translateX(-30px);
-            }
+        #ratingBadge.show-rating {
+            display: block;
+            opacity: 1;
+            animation: ratingGlow 1.5s infinite;
+        }
 
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+        #ratingBadge.hide-rating {
+            display: block;
+            opacity: 0;
+            transform: translateY(-12px);
+            pointer-events: none;
         }
 
         @keyframes ratingGlow {
@@ -214,6 +219,49 @@
             height: 100%;
             object-fit: contain;
             z-index: 1;
+        }
+
+        /* SKIP INTRO BUTTON */
+
+        #skipVideo {
+            position: absolute;
+            top: 25px;
+            right: 30px;
+            z-index: 20;
+            padding: 11px 22px;
+            margin: 0;
+            border: 1px solid rgba(255, 255, 255, 0.65);
+            background: rgba(0, 0, 0, 0.65);
+            color: white;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            letter-spacing: 3px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-15px);
+        }
+
+        #skipVideo.show-skip {
+            visibility: visible;
+            animation: skipAppear 0.6s ease forwards;
+        }
+
+        #skipVideo:hover {
+            background: darkred;
+            border-color: red;
+            box-shadow: 0 0 15px red;
+        }
+
+        @keyframes skipAppear {
+            from {
+                opacity: 0;
+                transform: translateY(-15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* INTRO RED FLASH */
@@ -467,6 +515,13 @@
                 left: 15px;
                 font-size: 12px;
             }
+
+            #skipVideo {
+                top: 15px;
+                right: 15px;
+                padding: 9px 15px;
+                font-size: 10px;
+            }
         }
 
         /* REDUCED MOTION */
@@ -514,9 +569,13 @@
     <section id="intro">
 
         <video id="gameVideo" playsinline preload="auto">
-            <source src="intro1.mp4">
+            <source src="./intro1.mp4" type="video/mp4">
             Your browser does not support HTML video.
         </video>
+
+        <!-- SKIP VIDEO -->
+
+        <button id="skipVideo">SKIP INTRO »</button>
 
         <div class="red-flash"></div>
         <div class="black-flash"></div>
@@ -566,8 +625,8 @@
         const warning = document.getElementById("warning");
         const warningTitle = document.getElementById("warningTitle");
         const warningText = document.getElementById("warningText");
-        const introCaption = document.getElementById("introCaption");
 
+        const introCaption = document.getElementById("introCaption");
         const intro = document.getElementById("intro");
         const video = document.getElementById("gameVideo");
 
@@ -576,12 +635,22 @@
 
         const backgroundMusic = document.getElementById("backgroundMusic");
         const ratingBadge = document.getElementById("ratingBadge");
+        const skipVideo = document.getElementById("skipVideo");
+
+        // TIMING SETTINGS
+
+        const INTRO_DELAY = 5000;
+        const RATING_HIDE_DELAY = 1200;
+        const RATING_FADE_DURATION = 1500;
+        const CAPTION_DELAY = 900;
+        const SKIP_APPEAR_DELAY = 2000;
 
         // SETTINGS
 
         backgroundMusic.volume = 0.35;
 
         let introStarted = false;
+        let menuShown = false;
 
         // CONTINUE BUTTON
 
@@ -597,41 +666,144 @@
             warningText.style.display = "none";
             continueBtn.style.display = "none";
 
+            // SHOW RATING BADGE
+
             ratingBadge.style.display = "block";
+            ratingBadge.classList.add("show-rating");
+
+            // WAIT BEFORE INTRO
 
             setTimeout(() => {
                 startIntro();
-            }, 5000);
+            }, INTRO_DELAY);
 
         });
-        async function startIntro() {
-            warning.style.display = "none";
 
+        // START INTRO VIDEO
+
+        async function startIntro() {
+
+            warning.style.display = "none";
             intro.style.display = "block";
 
-            introCaption.classList.add("show-caption");
+            // RESET INTRO ELEMENTS
+
+            introCaption.classList.remove("show-caption");
+            skipVideo.classList.remove("show-skip");
 
             video.currentTime = 0;
+
+            // START BACKGROUND MUSIC
 
             backgroundMusic.play().catch(error => {
                 console.log("Music playback error:", error);
             });
 
+            // PLAY VIDEO
+
             try {
+
                 await video.play();
+
+                // SMOOTH RATING BADGE FADE OUT
+
+                setTimeout(() => {
+
+                    ratingBadge.classList.remove("show-rating");
+                    ratingBadge.classList.add("hide-rating");
+
+                    // REMOVE BADGE AFTER FADE FINISHES
+
+                    setTimeout(() => {
+                        ratingBadge.style.display = "none";
+                    }, RATING_FADE_DURATION);
+
+                }, RATING_HIDE_DELAY);
+
+                // SHOW H2 AND PARAGRAPH
+
+                setTimeout(() => {
+
+                    if (!menuShown) {
+                        introCaption.classList.add("show-caption");
+                    }
+
+                }, CAPTION_DELAY);
+
+                // SHOW SKIP BUTTON AFTER 2 SECONDS
+
+                setTimeout(() => {
+
+                    if (!menuShown) {
+                        skipVideo.classList.add("show-skip");
+                    }
+
+                }, SKIP_APPEAR_DELAY);
+
             } catch (error) {
+
                 console.log("Video playback error:", error);
                 showMainMenu();
+
             }
 
         }
 
+        // SHOW MAIN MENU
+
         function showMainMenu() {
+
+            if (menuShown) return;
+
+            menuShown = true;
+
+            // STOP VIDEO
+
+            video.pause();
+
+            // HIDE INTRO ELEMENTS
+
+            introCaption.classList.remove("show-caption");
+            skipVideo.classList.remove("show-skip");
+
+            ratingBadge.classList.remove("show-rating");
+            ratingBadge.classList.add("hide-rating");
+
+            setTimeout(() => {
+                ratingBadge.style.display = "none";
+            }, RATING_FADE_DURATION);
+
             intro.style.display = "none";
+
+            // SHOW MAIN MENU
+
             mainMenu.style.display = "flex";
+
         }
 
-        video.addEventListener("ended", showMainMenu);
+        // SKIP VIDEO BUTTON
+
+        skipVideo.addEventListener("click", () => {
+            showMainMenu();
+        });
+
+        // WHEN VIDEO ENDS
+
+        video.addEventListener("ended", () => {
+            showMainMenu();
+        });
+
+        // VIDEO ERROR HANDLER
+
+        video.addEventListener("error", () => {
+
+            console.log("Unable to load intro1.mp4. Check the video file location.");
+
+            if (introStarted) {
+                showMainMenu();
+            }
+
+        });
 
     </script>
 
