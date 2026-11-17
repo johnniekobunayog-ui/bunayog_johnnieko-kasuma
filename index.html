@@ -514,7 +514,7 @@
     <section id="intro">
 
         <video id="gameVideo" playsinline preload="auto">
-            <source src="assets/intro.mp4" type="video/mp4">
+            <source src="intro1.mp4">
             Your browser does not support HTML video.
         </video>
 
@@ -597,45 +597,25 @@
             warningText.style.display = "none";
             continueBtn.style.display = "none";
 
-            // SHOW RATING
-
             ratingBadge.style.display = "block";
-
-            // WAIT 5 SECONDS
 
             setTimeout(() => {
                 startIntro();
             }, 5000);
 
         });
-
-        // START INTRO
-
         async function startIntro() {
-
-            // HIDE WARNING SCREEN COMPLETELY
-
             warning.style.display = "none";
-
-            // SHOW INTRO SCREEN
 
             intro.style.display = "block";
 
-            // SHOW H2 AND P2 TOGETHER
-
             introCaption.classList.add("show-caption");
 
-            // RESET VIDEO
-
             video.currentTime = 0;
-
-            // START MUSIC
 
             backgroundMusic.play().catch(error => {
                 console.log("Music playback error:", error);
             });
-
-            // START VIDEO
 
             try {
                 await video.play();
@@ -646,14 +626,10 @@
 
         }
 
-        // SHOW MAIN MENU AFTER VIDEO
-
         function showMainMenu() {
             intro.style.display = "none";
             mainMenu.style.display = "flex";
         }
-
-        // VIDEO ENDED
 
         video.addEventListener("ended", showMainMenu);
 
